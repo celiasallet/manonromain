@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>30 ans — Soirée d'anniversaire</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    </head>
+    <body>
+        <div class="infos">
+            <div class="flex">
+                <section class="hero card">
+                    <img id="hero-img" src="manonromain.png" alt="Bannière fête 30 ans">
+                </section>
+                <hgroup class=" intro card">
+                    <h1 class="h1">À nos trente glorieuses !</h1>
+                    <h3>Du Samedi 24 Janvier 2026 — 18h Au Dimanche 25 — 14h</h3>
+                    <p>On veut réunir les gens croisés au fil de nos vies : amis de toujours, potes de soirées, rencontres improvisées, collègues devenus amis, amis devenus famille, et la famille de l’un devenue la famille de l’autre. 
+                    Viens fêter ce moment avec nous !</p>
+                </hgroup>
+            </div>
+            <section class="programme card">
+                <h2 class="h2">Au programme</h2>
+                <ul>
+                    <li><strong>Samedi 24 janvier :</strong>
+                        <ul>
+                            <li>Arrivée + grosse teuf & auberge espagnole</li>
+                        </ul>
+                    </li>
+                    <li><strong>Nuit sur place :</strong>
+                        <ul>
+                            <li>Tout le monde dort sur place</li>
+                            <li>Prévoir matelas gonflable + duvet (Il y aura de la place pour tous)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Dimanche 25 janvier :</strong>
+                        <ul>
+                            <li>Brunch : graines bio, “café de chez le torréfacteur” (en réalité DWAPS premier prix)</li>
+                            <li>Départ dans la journée</li>
+                        </ul>
+                    </li>
+                </ul>  
+            </section>
+            <section class="flex">
+                <div class="adresse card">
+                    <hgroup>
+                        <h2 class="h2">La fête c'est par lààà !</h2>
+                        <p>Co-voiturage & transports en communs recommandé</p>
+                    </hgroup>   
+                    <div id="map" class="map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11410.564050168306!2d2.339719567764121!3d48.85887840003417!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e03cdce4ae9%3A0x38cfa580446f9e46!2sLe%20Marais%2C%20Paris!5e0!3m2!1sfr!2sfr!4v1765572008892!5m2!1sfr!2sfr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <ul>
+                        <!-- liste des transports ect -->
+                        <li>Parking sur place limité</li>
+                        <li>adresse du parking</li>
+                        <li>tram .....</li>
+                        <li>train .....</li>
+                        <li>bus .....</li>
+                    </ul>
+                </div>
+                <div class="inscription card">
+                    <hgroup>
+                        <h2 class="h2">On a trop envie que tout le monde soit là... <br>Allez, dis OUI !</h2>
+                        <p>Remplis le formulaire pour nous dire si tu viens… ou pas... Chaque réponse compte ♥</p>
+                    </hgroup>
+                    <form id="rsvp-form" method="POST" action="https://docs.google.com/forms/d/e/1FAIpQLScvNYW8HwRz36Bzc4vJupIhv_yp2PNMVEl0ZMhLbmCzKVrITg/formResponse" target="hidden_iframe" onsubmit="submitted=true;">
+                        <input type="hidden" name="entry.1086372451" id="entry_1086372451" placeholder="Prénom">
+                        <input type="hidden" name="entry.1886974586" id="entry_1886974586" placeholder="Nom">
+                        <input type="hidden" name="entry.1960753079" id="entry_1960753079" value="Oui, je viens !">
+                        <input type="hidden" name="fvv" value="1">
+                        <input type="hidden" name="pageHistory" value="0">
+                        <input type="hidden" name="fbzx" value="0">
+
+                        <div class="mb-4">
+                            <input type="text" class="form-control" placeholder="Prénom" oninput="document.getElementById('entry_1086372451').value=this.value" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="text" class="form-control" placeholder="Nom" oninput="document.getElementById('entry_1886974586').value=this.value" required>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-check">
+                            <input class="form-check-input" type="radio" name="presence_radio"
+                                onclick="document.getElementById('entry_1960753079').value='Oui, je viens !'"
+                                id="rsvp-yes" checked>
+                            <label class="form-check-label" for="rsvp-yes">Oui, je viens !</label>
+                            </div>
+                            <div class="form-check">
+                            <input class="form-check-input" type="radio" name="presence_radio"
+                                onclick="document.getElementById('entry_1960753079').value='Non, je ne peux pas venir'"
+                                id="rsvp-no">
+                            <label class="form-check-label" for="rsvp-no">Non, je ne peux pas venir</label>
+                            </div>
+                        </div>
+                            <button class="btn btn-primary" type="submit">Envoyer</button>
+                    </form>
+
+                    <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+                    <div id="thankyou-popup">
+                        <div class="popup-content">
+                            <span class="close-btn">&times;</span>
+                            Merci de ta réponse, c'est noté !
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="stay card">
+                <hgroup>
+                    <h2 class="h2">Plus d’infos très bientôt !</h2>
+                    <p>On prépare quelque chose de chouette 👀
+                    <br>Ici, tu pourras bientôt t’organiser pour le covoiturage et l’auberge espagnole.</p>
+                </hgroup>
+            </section>
+        </div>
+
+        <footer class="text-end">
+            Website by CC
+        </footer>
+    </body>
+    <script src="script.js"></script>
+
+</html>
