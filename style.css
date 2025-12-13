@@ -139,13 +139,16 @@ ul li:last-child {
         opacity(0.8);
     
 }
-
+hr {
+    border-color: #090207;
+}
 .map {
     object-fit: cover;
     overflow: hidden;
     border-radius: .5rem;
     height: 30vh;
     border: solid .0625rem black;
+    margin-bottom: 1rem;
 }
 
 .map iframe {
@@ -198,6 +201,8 @@ ul li:last-child {
     border: #090207;
     border-radius: 1.25rem;
     padding: .5rem 1.5rem;
+    border: solid 1px black;
+
 }
 .btn-primary:hover {
     background-color: white;
