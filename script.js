@@ -85,104 +85,198 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   ////////////////
-  // Render Trips
-  function renderTrips(trips) {
-    const container = document.getElementById('trips-container');
-    if(!container) return;
-    container.innerHTML = '';
+//   // Render trips
+// Render Trips
+function renderTrips(trips) {
+  const container = document.getElementById('trips-container');
+  if(!container) return;
+  container.innerHTML = '';
 
-    trips.forEach(trip => {
-  
-   
+  trips.forEach(trip => {
     const card = document.createElement('div');
     card.className = 'trip-card';
 
-      card.innerHTML = `
-        <h3 class="volant">${trip.driver}</h3>
-        <p class="depart">Départ : <strong>${trip.departure}</strong></p>
-        <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
-        ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
-      `;
+    card.innerHTML = `
+      <h3 class="volant">${trip.driver}</h3>
+      <p class="depart">Départ : <strong>${trip.departure}</strong></p>
+      <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
+      ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
+    `;
 
-      if(trip.seats_left > 0){
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Ton pseudo';
-        input.className = 'pseudo-input';
+    if(trip.seats_left >= 1){
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Ton pseudo';
+      input.className = 'pseudo-input';
 
-        const button = document.createElement('button');
-        button.type = 'button'; // important : évite comportement submit
-        button.textContent = 'Réserver';
-        button.className = 'btn btn-primary';
+      const button = document.createElement('button');
+      button.type = 'button'; // évite le submit
+      button.textContent = 'Réserver';
+      button.className = 'btn btn-primary';
 
-        button.addEventListener('click', () => {
-          const pseudo = input.value.trim();
-          if(!pseudo){ showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
+      button.addEventListener('click', () => {
+        const pseudo = input.value.trim();
+        if(!pseudo){ showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
 
-          fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
-          })
-          .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                // popup dans la carte du trajet
-                showPopupInCard(card, "Trajet réservé avec succès !");
-
-                // désactive le bouton sur lequel on a cliqué
-                button.textContent = "Merci !";
-                button.disabled = true;
-                button.classList.add('disabled');
-
-                // met à jour le nombre de places
-                const seatsLeftSpan = card.querySelector('.seats-left');
-                seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
-                if(Number(seatsLeftSpan.textContent) === 0){
-                    input.remove();
-                    button.remove();
-                    const full = document.createElement('span');
-                    full.className = 'full';
-                    full.textContent = 'Complet';
-                    card.appendChild(full);
-                }
-            } else {
-                showPopupInCard(card, 'Erreur : ' + data.error);
-            }
+        fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
         })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success){
+            showPopupInCard(card, "Trajet réservé avec succès !");
 
-          .catch(err => { console.error(err); alert('Erreur lors de la réservation'); });
-        });
+            button.textContent = "Merci !";
+            button.disabled = true;
+            button.classList.add('disabled');
 
-        card.appendChild(input);
-        card.appendChild(button);
-      } else {
-        const full = document.createElement('span');
-        full.className = 'full';
-        full.textContent = 'Complet';
-        card.appendChild(full);
-      }
+            const seatsLeftSpan = card.querySelector('.seats-left');
+            seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
+            if(Number(seatsLeftSpan.textContent) === 0){
+              input.remove();
+              button.remove();
+              const full = document.createElement('span');
+              full.className = 'full';
+              full.textContent = 'Complet';
+              card.appendChild(full);
+            }
+          } else {
+            showPopupInCard(card, 'Erreur : ' + data.error);
+          }
+        })
+        .catch(err => { console.error(err); alert('Erreur lors de la réservation'); });
+      });
 
-      container.appendChild(card);
-    });
-  }
+      card.appendChild(input);
+      card.appendChild(button);
+    } else {
+      const full = document.createElement('span');
+      full.className = 'full';
+      full.textContent = 'Complet';
+      card.appendChild(full);
+    }
 
-  // Fetch trips au chargement
-  const tripsContainer = document.getElementById('trips-container');
-  if(tripsContainer){
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
-        const mainTrips = tripsData.filter(t => t.seats_total >= 1);
-        // const reservations = tripsData.filter(t => t.seats_total === 1 && t.pseudo);
-        const reservations = tripsData.filter(t => t.parent_id);
+    container.appendChild(card);
+  });
+}
 
-        mainTrips.forEach(trip => {
-          trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
-        });
+// Fetch trips au chargement
+const tripsContainer = document.getElementById('trips-container');
+if(tripsContainer){
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
+      const mainTrips = tripsData.filter(t => t.seats_total >= 1);
+      const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
 
-        renderTrips(mainTrips);
-      })
-      .catch(err => console.error('Erreur récupération trajets', err));
-  }
-});
+      mainTrips.forEach(trip => {
+        trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
+      });
+
+      renderTrips(mainTrips);
+    })
+    .catch(err => console.error('Erreur récupération trajets', err));
+}
+
+//   function renderTrips(trips) {
+//     const container = document.getElementById('trips-container');
+//     if(!container) return;
+//     container.innerHTML = '';
+
+//     trips.forEach(trip => {
+  
+   
+//     const card = document.createElement('div');
+//     card.className = 'trip-card';
+
+//       card.innerHTML = `
+//         <h3 class="volant">${trip.driver}</h3>
+//         <p class="depart">Départ : <strong>${trip.departure}</strong></p>
+//         <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
+//         ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
+//       `;
+
+//       if(trip.seats_left >= 1){
+//         const input = document.createElement('input');
+//         input.type = 'text';
+//         input.placeholder = 'Ton pseudo';
+//         input.className = 'pseudo-input';
+
+//         const button = document.createElement('button');
+//         button.type = 'button'; // important : évite comportement submit
+//         button.textContent = 'Réserver';
+//         button.className = 'btn btn-primary';
+
+//         button.addEventListener('click', () => {
+//           const pseudo = input.value.trim();
+//           if(!pseudo){ showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
+
+//           fetch(API_URL, {
+//             method: 'POST',
+//             body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
+//           })
+//           .then(res => res.json())
+//         .then(data => {
+//             if(data.success){
+//                 // popup dans la carte du trajet
+//                 showPopupInCard(card, "Trajet réservé avec succès !");
+
+//                 // désactive le bouton sur lequel on a cliqué
+//                 button.textContent = "Merci !";
+//                 button.disabled = true;
+//                 button.classList.add('disabled');
+
+//                 // met à jour le nombre de places
+//                 const seatsLeftSpan = card.querySelector('.seats-left');
+//                 seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
+//                 if(Number(seatsLeftSpan.textContent) === 0){
+//                     input.remove();
+//                     button.remove();
+//                     const full = document.createElement('span');
+//                     full.className = 'full';
+//                     full.textContent = 'Complet';
+//                     card.appendChild(full);
+//                 }
+//             } else {
+//                 showPopupInCard(card, 'Erreur : ' + data.error);
+//             }
+//         })
+
+//           .catch(err => { console.error(err); alert('Erreur lors de la réservation'); });
+//         });
+
+//         card.appendChild(input);
+//         card.appendChild(button);
+//       } else {
+//         const full = document.createElement('span');
+//         full.className = 'full';
+//         full.textContent = 'Complet';
+//         card.appendChild(full);
+//       }
+
+//       container.appendChild(card);
+//     });
+//   }
+
+//   // Fetch trips au chargement
+//   const tripsContainer = document.getElementById('trips-container');
+//   if(tripsContainer){
+//     fetch(API_URL)
+//       .then(res => res.json())
+//       .then(data => {
+//         const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
+//         const mainTrips = tripsData.filter(t => t.seats_total >= 1);
+//         // const reservations = tripsData.filter(t => t.seats_total === 1 && t.pseudo);
+//         const reservations = tripsData.filter(t => t.parent_id);
+
+//         mainTrips.forEach(trip => {
+//           trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
+//         });
+
+//         renderTrips(mainTrips);
+//       })
+//       .catch(err => console.error('Erreur récupération trajets', err));
+//   }
+// });
