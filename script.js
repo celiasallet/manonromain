@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
       `;
 
-      if(trip.seats_left >= 1){
+      if(trip.seats_left > 0){
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Ton pseudo';
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainTrips = tripsData.filter(t => t.seats_total >= 1);
         // const reservations = tripsData.filter(t => t.seats_total === 1 && t.pseudo);
         const reservations = tripsData.filter(t => t.parent_id);
-        
+
         mainTrips.forEach(trip => {
           trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
         });
