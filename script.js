@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
       `;
 
-      if(trip.seats_left >= 1){
+      if(trip.seats_left > -1){
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Ton pseudo';
