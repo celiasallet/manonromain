@@ -306,7 +306,7 @@ footer {
 }
 
 @media screen and (min-width: 1020px) {
-    .programme li, .stay p, .form-control {
+    .programme li, .stay p, .form-control .max {
         max-width: 70%;
     }
     .flex {
