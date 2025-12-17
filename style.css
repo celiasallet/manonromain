@@ -206,18 +206,24 @@ hr {
     background-color: white;
     color: #090207;
     border: solid 1px black;
-
 }
-#thankyou-popup {
+.trip-card {
+  position: relative;
+  margin-top: 1.5rem;
+}
+.trip-card span {
+    color: #090207;
+}
+.thankyou-popup {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
     
-#thankyou-popup .popup-content {
+.thankyou-popup .popup-content {
     background: #fff;
     padding: 2rem 2.5rem;
     border-radius: 10px;
@@ -229,7 +235,7 @@ hr {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
     
-#thankyou-popup .close-btn {
+.thankyou-popup .close-btn {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -239,6 +245,58 @@ hr {
     cursor: pointer;
 }
 
+/* djopazodjpoajpdojaozdjopajzdpojaozdj */
+.trip-card {
+padding: clamp(1rem, -1.5rem + 8vw, 3rem) !important;
+
+  border-radius: 1.25rem;
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    height: auto;
+    background: linear-gradient(
+        120deg,
+        hsla(160, 60%, 60%, 0.12),
+        hsla(0, 0%, 100%, 0.45) 55%
+    );
+
+    border: 1px solid hsla(160, 40%, 70%, 0.35);
+
+    box-shadow:
+        0 12px 32px rgba(20, 40, 60, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+
+}
+.full {
+  color: red;
+  font-weight: bold;
+}
+
+.pseudo-input {
+    display: block !important;
+    border-radius: 1.25rem;
+    border: solid .0625rem #090207;
+    padding: .25rem .5rem;
+    font-size: 1rem;
+    margin-bottom: .5rem;
+    margin-top: .75rem;
+}
+.depart {
+    margin-bottom: .25rem;
+    
+}
+.volant {
+    font-size: clamp(1.5rem, 0.875rem + 2vw, 2rem);
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+}
+.dispo {
+    margin-bottom: .5rem;
+    }
+.subsub {
+    font-size: .75rem;
+    margin-top: 1rem;
+}
+/* efjpejfpjgpojpojg */
 footer {
     margin-top: 2rem;
     padding-right: .5rem;
@@ -246,9 +304,9 @@ footer {
     color: hsl(220, 35%, 8%);
     font-size:.75rem
 }
-
+#trips-container {
+}
 @media screen and (min-width: 1020px) {
-
     .programme li, .stay p, .form-control {
         max-width: 70%;
     }
@@ -260,3 +318,15 @@ footer {
         max-width: 60%;
     }
  }  
+@media screen and (min-width: 900px) {
+#trips-container {
+    margin-top: 1rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+.trip-card{
+    margin: 0;
+    flex: 1 1 50%;
+}
+}
