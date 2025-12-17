@@ -84,9 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  ////////////////
-//   // Render trips
-// Render Trips
+  // Render Trips
 function renderTrips(trips) {
   const container = document.getElementById('trips-container');
   if(!container) return;
@@ -180,6 +178,10 @@ if(tripsContainer){
     .catch(err => console.error('Erreur récupération trajets', err));
 }
 
+});
+
+  ////////////////
+//   // Render Trips
 //   function renderTrips(trips) {
 //     const container = document.getElementById('trips-container');
 //     if(!container) return;
