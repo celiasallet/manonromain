@@ -152,7 +152,44 @@
             <div class="thankyou-popup"></div>
         </section>
     </div>
+    <section class="card">
+        <hgroup>
+            <h2 class="h2">Auberge Espagnol</h2>
+            <p class="max">Chacun participe au dîner du soir !<br>
+                Pour éviter que tout le monde apporte la même chose, merci de choisir ce que tu souhaites amener.
+            </p>
+        </hgroup>
+        <form id="aub" 
+            method="POST"
+            action="https://docs.google.com/forms/d/e/1FAIpQLSed4MqzjOZ56yF0NNY8PXc0cmAzA_6a3xs533F_dDV6RvrPog/formResponse"
+            target="hidden_iframe">
+            <div class="mb-4">
+                <!-- Prénom -->
+                <input type="text" class="form-control" placeholder="Prénom"
+                    name="entry.3880076" required>
+            </div>
+            <div class="mb-4">
+                <!-- Choix : Boissons / Apéro / Salé / Sucré -->
+                <select class="form-control" name="entry.1551594378" required>
+                    <option value="">Choisir une option  ▾</option>
+                    <option value="Boissons">Boissons</option>
+                    <option value="Apéro">Apéro</option>
+                    <option value="Salé">Salé</option>
+                    <option value="Sucré">Sucré</option>
+                </select>
+            </div>
 
+            <button class="btn btn-primary" type="submit">Envoyer</button>
+        </form>
+        <iframe name="hidden_iframe" style="display:none;"></iframe>
+        <div class="thankyou-popup">
+            <div class="popup-content">
+                <span class="close-btn">&times;</span>
+                <p class="popup-message">Merci de ta réponse, c'est noté !</p>
+            </div>
+        </div>
+    </section>
+    
     <footer class="text-end">
         Website by CC
     </footer>

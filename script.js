@@ -179,3 +179,44 @@ if(tripsContainer){
 }
 
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  //////////////////// popup
+  function showPopupInCard(card, message) {
+    const popup = document.createElement('div');
+    popup.className = 'thankyou-popup';
+    popup.innerHTML = `
+      <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <p class="popup-message">${message}</p>
+      </div>
+    `;
+    card.appendChild(popup);
+    popup.style.display = 'flex';
+
+    const closeBtn = popup.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => popup.remove());
+    popup.addEventListener('click', e => { if(e.target === popup) popup.remove(); });
+  }
+
+  //////////////////// RSVP Form "aub"
+  const form = document.getElementById('aub');
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault(); // bloque le reload
+
+      // Affiche le popup
+      showPopupInCard(form.parentElement, "Mercii !");
+
+      // Désactive le bouton et change le texte
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = "C'est noté !";
+      btn.disabled = true;
+
+      // Envoi Google Forms via iframe cachée
+      form.submit();
+    });
+  }
+
+});
