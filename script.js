@@ -220,3 +220,113 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+////////// camenbert 
+
+const canvas = document.getElementById('camembert');
+const ctx = canvas.getContext('2d');
+const totalInput = document.getElementById('total-participants');
+
+// Noms des catégories
+const categories = ['Boissons', 'Apéro', 'Salé', 'Sucré'];
+
+// Nombres de participants par catégorie (à remplir dynamiquement ou test)
+let dataCounts = [0, 0, 0, 0]; // par défaut zéro
+
+let chart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: categories,
+    datasets: [{
+      label: 'Répartition',
+      data: dataCounts,
+      backgroundColor: ['#4e79a7','#2b32f2ff','#5769e1ff','#76b7b2'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: function(context){
+            return context.label + ': ' + context.raw + ' personnes';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Fonction pour mettre à jour le camembert
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Le lien CSV public de ta Google Sheet
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjqjXQl1zP_xzNtrXzludfYtciqmT1N8bV3oFwNxzse3-lHHys47N6cp0t4qldqEY5myT6safZKA77/pub?gid=1608669145&single=true&output=csv";
+
+  // Les catégories à afficher
+  const categories = ['Boissons', 'Apéro', 'Salé', 'Sucré'];
+  const counts = [0, 0, 0, 0]; // compteur local
+
+  const canvas = document.getElementById('camembert');
+  const ctx = canvas.getContext('2d');
+
+  // Création du camembert Chart.js
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: categories,
+      datasets: [{
+        data: counts,
+        backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2']
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.label}: ${ctx.raw} personnes`
+          }
+        }
+      }
+    }
+  });
+
+  // Fonction pour mettre à jour le camembert avec la règle 25%
+  function updateChart() {
+    // nombre total de réponses
+    const total = counts.reduce((a,b) => a + b, 0);
+    const maxPerCat = Math.ceil(total * 0.25);
+
+    // on limite chaque barre à 25%
+    chart.data.datasets[0].data = counts.map(x => Math.min(x, maxPerCat));
+    chart.update();
+  }
+
+  // Fetch du CSV
+  fetch(CSV_URL)
+    .then(res => res.text())
+    .then(csv => {
+      const lines = csv.trim().split('\n');
+      const header = lines.shift().split(','); // entête
+
+      // Trouve l’index de la colonne “Choix”
+      const choixIndex = header.findIndex(h => /choix|Choix|CHOIX/.test(h));
+
+      lines.forEach(line => {
+        const cols = line.split(',');
+        const choix = cols[choixIndex]?.trim();
+        const idx = categories.indexOf(choix);
+        if (idx !== -1) counts[idx]++;
+      });
+
+      updateChart();
+    })
+    .catch(err => {
+      console.error('Erreur chargement CSV :', err);
+    });
+
+});
