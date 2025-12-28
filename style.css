@@ -111,7 +111,9 @@ ul li:last-child {
 
 }
 
-
+.aub {
+    margin-top: 1.5rem;
+}
 .hero{
 
     position:relative;
@@ -284,6 +286,7 @@ padding: clamp(1rem, -1.5rem + 8vw, 3rem) !important;
     margin-bottom: .25rem;
     
 }
+
 .volant {
     font-size: clamp(1.5rem, 0.875rem + 2vw, 2rem);
     text-transform: capitalize;
