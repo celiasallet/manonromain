@@ -159,46 +159,34 @@ function renderTrips(trips) {
   });
 }
 
-// // Fetch trips au chargement
-
+// Fetch trips au chargement
 const tripsContainer = document.getElementById('trips-container');
 
 if (tripsContainer) {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      // On garde uniquement les lignes valides côté front
       const tripsData = data.filter(r => 
-        !isNaN(Number(r.seats_total)) && 
-        !isNaN(Number(r.seats_left))
+        !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left))
       );
 
-      // Ultra safe : on filtre les vrais trajets
-      const mainTrips = tripsData.filter(t => {
-        // 1️⃣ Doit avoir au moins 1 place
-        if (Number(t.seats_total) < 1) return false;
+      // Trajets principaux = parent_id vide
+      const mainTrips = tripsData.filter(t => !t.parent_id);
 
-        // 2️⃣ Parent_id vide → c’est un vrai trajet
-        const hasParent = t.parent_id !== null && t.parent_id !== "" && t.parent_id !== undefined;
+      // Réservations = parent_id rempli
+      const reservations = tripsData.filter(t => t.parent_id);
 
-        // 3️⃣ Si pseudo rempli et seats_total=1 & seats_left=1 → c’est une réservation même si parent_id absent
-        const looksLikeReservation = t.pseudo && t.pseudo.trim() !== "" && Number(t.seats_total) === 1 && Number(t.seats_left) === 1;
-
-        // On garde seulement si ce n’est pas une réservation
-        return !hasParent && !looksLikeReservation;
-      });
-
-      // Toutes les lignes avec parent_id = réservations
-      const reservations = tripsData.filter(t => t.parent_id && t.pseudo && t.pseudo.trim() !== "");
-
-      // On rattache les pseudos à leurs trajets parents
+      // On rattache les pseudos aux cartes parent
       mainTrips.forEach(trip => {
         trip.reservedPseudos = reservations
           .filter(r => r.parent_id === trip.id)
           .map(r => r.pseudo);
+
+        // On décrémente seats_left pour refléter les réservations
+        const reservedCount = trip.reservedPseudos.length;
+        trip.seats_left = Number(trip.seats_total) - reservedCount;
       });
 
-      // Affichage
       renderTrips(mainTrips);
     })
     .catch(err => console.error('Erreur récupération trajets', err));
