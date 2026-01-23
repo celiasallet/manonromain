@@ -161,36 +161,47 @@ function renderTrips(trips) {
 
 // Fetch trips au chargement
 const tripsContainer = document.getElementById('trips-container');
-
-if (tripsContainer) {
+if(tripsContainer){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const tripsData = data.filter(r => 
-        !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left))
-      );
+      const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
+      const mainTrips = tripsData.filter(t => t.seats_total >= 1);
+      const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
 
-      // Trajets principaux = parent_id vide
-      const mainTrips = tripsData.filter(t => !t.parent_id);
-
-      // Réservations = parent_id rempli
-      const reservations = tripsData.filter(t => t.parent_id);
-
-      // On rattache les pseudos aux cartes parent
       mainTrips.forEach(trip => {
-        trip.reservedPseudos = reservations
-          .filter(r => r.parent_id === trip.id)
-          .map(r => r.pseudo);
-
-        // On décrémente seats_left pour refléter les réservations
-        const reservedCount = trip.reservedPseudos.length;
-        trip.seats_left = Number(trip.seats_total) - reservedCount;
+        trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
       });
 
       renderTrips(mainTrips);
     })
     .catch(err => console.error('Erreur récupération trajets', err));
 }
+
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  //////////////////// popup
+  function showPopupInCard(card, message) {
+    const popup = document.createElement('div');
+    popup.className = 'thankyou-popup';
+    popup.innerHTML = `
+      <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <p class="popup-message">${message}</p>
+      </div>
+    `;
+    card.appendChild(popup);
+    popup.style.display = 'flex';
+
+    const closeBtn = popup.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => popup.remove());
+    popup.addEventListener('click', e => { if(e.target === popup) popup.remove(); });
+  }
+
+
+});
 
 // // Fetch trips au chargement
 // const tripsContainer = document.getElementById('trips-container');
@@ -216,5 +227,3 @@ if (tripsContainer) {
 //     .catch(err => console.error('Erreur récupération trajets', err));
 // }
 
-// 
-});
