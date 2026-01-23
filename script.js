@@ -178,7 +178,7 @@ if(tripsContainer){
     })
     .catch(err => console.error('Erreur récupération trajets', err));
 }
-console.log(data.map(t => t.pseudo));
 
 
 });
+console.log(data.map(t => t.pseudo));
