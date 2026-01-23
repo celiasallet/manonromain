@@ -161,23 +161,22 @@ function renderTrips(trips) {
 
 // Fetch trips au chargement
 // Fetch trips au chargement
-const tripsContainer = document.getElementById('trips-container');
-if(tripsContainer){
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      // NE GARDER QUE LES TRAJETS VALIDES AVEC PSEUDO VIDE
-      const mainTrips = data.filter(t => 
-  (!t.pseudo || t.pseudo.trim() === '') &&   // pseudo vide ou juste espaces
-  !isNaN(Number(t.seats_total)) &&
-  !isNaN(Number(t.seats_left)) &&
-  t.seats_total >= 1
-);
+fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+    console.log('Données reçues :', data); // <-- ici, c’est correct
 
-      renderTrips(mainTrips);
-    })
-    .catch(err => console.error('Erreur récupération trajets', err));
-}
+    const mainTrips = data.filter(t => {
+      const pseudo = (t.pseudo || '').trim();  // force string et enlève espaces
+      const seatsTotal = Number(t.seats_total);
+      const seatsLeft = Number(t.seats_left);
+
+      return pseudo === '' && !isNaN(seatsTotal) && !isNaN(seatsLeft) && seatsTotal >= 1;
+    });
+
+    renderTrips(mainTrips);
+  })
+  .catch(err => console.error('Erreur récupération trajets', err));
 
 
 });
