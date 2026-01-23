@@ -164,20 +164,23 @@ function renderTrips(trips) {
 fetch(API_URL)
   .then(res => res.json())
   .then(data => {
-    console.log('Données reçues :', data); // <-- ici, c’est correct
+    console.log('Données reçues :', data);
+    console.log('Pseudos reçus :', data.map(t => t.pseudo)); // ✅ ici c'est ok
 
     const mainTrips = data.filter(t => {
-      const pseudo = (t.pseudo || '').trim();  // force string et enlève espaces
+      const pseudo = (t.pseudo || '').trim();
       const seatsTotal = Number(t.seats_total);
       const seatsLeft = Number(t.seats_left);
-
       return pseudo === '' && !isNaN(seatsTotal) && !isNaN(seatsLeft) && seatsTotal >= 1;
     });
+
+    console.log('Trajets filtrés (pseudo vide) :', mainTrips);
 
     renderTrips(mainTrips);
   })
   .catch(err => console.error('Erreur récupération trajets', err));
 
 
+
 });
-console.log('Pseudos reçus :', data.map(t => t.pseudo));
+
