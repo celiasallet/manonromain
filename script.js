@@ -118,7 +118,7 @@ function renderTrips(trips) {
 
         fetch(API_URL, {
           method: 'POST',
-          body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
+          body: JSON.stringify({action:'reserve', pseudo})
         })
         .then(res => res.json())
         .then(data => {
@@ -167,7 +167,7 @@ if(tripsContainer){
     .then(data => {
       const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
       const mainTrips = tripsData.filter(t => t.seats_total >= 1);
-      const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
+      // const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
 
       mainTrips.forEach(trip => {
         trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
