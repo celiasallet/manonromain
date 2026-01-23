@@ -118,7 +118,7 @@ function renderTrips(trips) {
 
         fetch(API_URL, {
           method: 'POST',
-          body: JSON.stringify({action:'reserve', pseudo})
+          body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
         })
         .then(res => res.json())
         .then(data => {
@@ -160,22 +160,24 @@ function renderTrips(trips) {
 }
 
 // Fetch trips au chargement
+// Fetch trips au chargement
 const tripsContainer = document.getElementById('trips-container');
 if(tripsContainer){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
-      const mainTrips = tripsData.filter(t => t.seats_total >= 1);
-      // const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
-
-      mainTrips.forEach(trip => {
-        trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
-      });
+      // NE GARDER QUE LES TRAJETS VALIDES AVEC PSEUDO VIDE
+      const mainTrips = data.filter(t => 
+        !t.pseudo &&                        // pseudo vide
+        !isNaN(Number(t.seats_total)) &&    // seats_total valide
+        !isNaN(Number(t.seats_left)) &&     // seats_left valide
+        t.seats_total >= 1                   // au moins 1 place
+      );
 
       renderTrips(mainTrips);
     })
     .catch(err => console.error('Erreur récupération trajets', err));
 }
+
 
 });
