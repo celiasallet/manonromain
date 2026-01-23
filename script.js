@@ -180,4 +180,4 @@ fetch(API_URL)
 
 
 });
-console.log(data.map(t => t.pseudo));
+console.log('Pseudos reçus :', data.map(t => t.pseudo));
