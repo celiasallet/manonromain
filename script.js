@@ -165,10 +165,11 @@ fetch(API_URL)
   .then(res => res.json())
   .then(data => {
     console.log('Données reçues :', data);
-    console.log('Pseudos reçus :', data.map(t => t.pseudo)); // ✅ ici c'est ok
 
-   const mainTrips = data.filter(trip => !trip.pseudo); 
+    // NE GARDER QUE LES TRAJETS SANS PSEUDO
+    const mainTrips = data.filter(trip => !trip.pseudo || trip.pseudo.trim() === '');
 
+    console.log('Trajets filtrés (pseudo vide) :', mainTrips);
 
     renderTrips(mainTrips);
   })
