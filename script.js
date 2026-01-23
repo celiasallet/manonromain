@@ -177,3 +177,4 @@ fetch(API_URL)
 
 });
 
+console.log(data[0])
