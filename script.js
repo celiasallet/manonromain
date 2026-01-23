@@ -167,19 +167,12 @@ fetch(API_URL)
     console.log('Données reçues :', data);
     console.log('Pseudos reçus :', data.map(t => t.pseudo)); // ✅ ici c'est ok
 
-    const mainTrips = data.filter(t => {
-      const pseudo = (t.pseudo || '').trim();
-      const seatsTotal = Number(t.seats_total);
-      const seatsLeft = Number(t.seats_left);
-      return pseudo === '' && !isNaN(seatsTotal) && !isNaN(seatsLeft) && seatsTotal >= 1;
-    });
+   const mainTrips = data.filter(trip => !trip.pseudo); 
 
-    console.log('Trajets filtrés (pseudo vide) :', mainTrips);
 
     renderTrips(mainTrips);
   })
   .catch(err => console.error('Erreur récupération trajets', err));
-
 
 
 });
