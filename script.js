@@ -159,18 +159,31 @@ function renderTrips(trips) {
   });
 }
 
-// Fetch trips au chargement
+
+
+
 const tripsContainer = document.getElementById('trips-container');
-if(tripsContainer){
+
+if (tripsContainer) {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
-      const mainTrips = tripsData.filter(t => t.seats_total >= 1);
-      const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
+      const tripsData = data.filter(
+        r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left))
+      );
+
+      const mainTrips = tripsData.filter(
+        t => t.seats_total >= 1 && !t.parent_id
+      );
+
+      const reservations = tripsData.filter(
+        t => t.parent_id
+      );
 
       mainTrips.forEach(trip => {
-        trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
+        trip.reservedPseudos = reservations
+          .filter(r => r.parent_id === trip.id)
+          .map(r => r.pseudo);
       });
 
       renderTrips(mainTrips);
@@ -178,4 +191,29 @@ if(tripsContainer){
     .catch(err => console.error('Erreur récupération trajets', err));
 }
 
+// // Fetch trips au chargement
+// const tripsContainer = document.getElementById('trips-container');
+// if(tripsContainer){
+//   fetch(API_URL)
+//     .then(res => res.json())
+//     .then(data => {
+//       const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
+//      const mainTrips = tripsData.filter(
+//   t => t.seats_total >= 1 && !t.parent_id
+// );
+
+// const reservations = tripsData.filter(
+//   t => t.parent_id
+// ); 
+
+//       mainTrips.forEach(trip => {
+//         trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
+//       });
+
+//       renderTrips(mainTrips);
+//     })
+//     .catch(err => console.error('Erreur récupération trajets', err));
+// }
+
+// 
 });
