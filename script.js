@@ -168,11 +168,11 @@ if(tripsContainer){
     .then(data => {
       // NE GARDER QUE LES TRAJETS VALIDES AVEC PSEUDO VIDE
       const mainTrips = data.filter(t => 
-        !t.pseudo &&                        // pseudo vide
-        !isNaN(Number(t.seats_total)) &&    // seats_total valide
-        !isNaN(Number(t.seats_left)) &&     // seats_left valide
-        t.seats_total >= 1                   // au moins 1 place
-      );
+  (!t.pseudo || t.pseudo.trim() === '') &&   // pseudo vide ou juste espaces
+  !isNaN(Number(t.seats_total)) &&
+  !isNaN(Number(t.seats_left)) &&
+  t.seats_total >= 1
+);
 
       renderTrips(mainTrips);
     })
