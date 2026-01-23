@@ -173,8 +173,8 @@ if (tripsContainer) {
       );
 
       const mainTrips = tripsData.filter(
-        t => t.seats_total >= 1 && !t.parent_id
-      );
+  t => t.seats_total >= 1 && !t.parent_id && !t.pseudo
+);
 
       const reservations = tripsData.filter(
         t => t.parent_id
