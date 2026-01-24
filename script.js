@@ -118,7 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Données reçues :', data);
 
         // NE GARDER QUE LES TRAJETS SANS PSEUDO
-        const mainTrips = data.filter(trip => !(trip.pseudo && trip.pseudo.trim() !== ''));
+       const mainTrips = data.filter(trip => !trip.pseudo || trip.pseudo.trim() === '');
+
         console.log('Trajets filtrés (pseudo vide) :', mainTrips);
         renderTrips(mainTrips);
       })
