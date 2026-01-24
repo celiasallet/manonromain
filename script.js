@@ -117,7 +117,7 @@ function renderTrips(trips) {
 
         fetch(API_URL, {
           method: 'POST',
-          body: JSON.stringify({action:'reserve', trip_id:trip.id, pseudo})
+          body: JSON.stringify({action:'reserve', pseudo})
         })
         .then(res => res.json())
         .then(data => {
