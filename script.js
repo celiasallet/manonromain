@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       showPopupInCard(form.parentElement, "Merci de ta réponse, c'est noté !");
-      const btn = form.querySelector('button[type='submit']');
+      const btn = form.querySelector("button[type='submit']");
       btn.textContent = "C'est noté !";
       btn.disabled = true;
       form.submit();
