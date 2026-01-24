@@ -165,6 +165,7 @@ if(tripsContainer){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+      console.log('Données reçues :', data);
       const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
       const mainTrips = tripsData.filter(t => t.seats_total >= 1);
       const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
