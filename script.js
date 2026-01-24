@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM READY');
 
-  //////////////////// popup
+  ////////////////////
+  // Fonction popup
   function showPopupInCard(card, message) {
     const popup = document.createElement('div');
     popup.className = 'thankyou-popup';
@@ -24,14 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('rsvp-form');
   if (form) {
     form.addEventListener('submit', function(e) {
-      e.preventDefault(); // bloque le reload
+      e.preventDefault();
       showPopupInCard(form.parentElement, "Merci de ta réponse, c'est noté !");
-      const btn = form.querySelector('button[type="submit"]');
+      const btn = form.querySelector('button[type='submit']');
       btn.textContent = "C'est noté !";
       btn.disabled = true;
-      form.submit(); 
+      form.submit();
     });
-  }
+  } // <-- fermeture du if (form)
 
   ////////////////////
   // Trip Form / Fetch trips
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
       `;
 
-      if(trip.seats_left >= 1){
+      if (trip.seats_left >= 1) {
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Ton pseudo';
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         button.addEventListener('click', () => {
           const pseudo = input.value.trim();
-          if(!pseudo){ showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
+          if (!pseudo) { showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
 
           fetch(API_URL, {
             method: 'POST',
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
           })
           .then(res => res.json())
           .then(data => {
-            if(data.success){
+            if (data.success) {
               showPopupInCard(card, "Trajet réservé avec succès !");
               button.textContent = "Merci !";
               button.disabled = true;
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const seatsLeftSpan = card.querySelector('.seats-left');
               seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
 
-              if(Number(seatsLeftSpan.textContent) === 0){
+              if (Number(seatsLeftSpan.textContent) === 0) {
                 input.remove();
                 button.remove();
                 const full = document.createElement('span');
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Fetch trips
-  if(tripsContainer){
+  if (tripsContainer) {
     fetch(API_URL)
       .then(res => res.json())
       .then(data => {
@@ -124,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.error('Erreur récupération trajets', err));
   }
 });
+
 
 
 //   const API_URL = 'https://script.google.com/macros/s/AKfycbwZplUjWy7PPpjn-cPRwstji_0L2mPQeotLi5Zl8ZSzAWV9_D5h7Bc7hea9Ea6Bw7q3/exec';
