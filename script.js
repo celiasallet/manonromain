@@ -91,6 +91,8 @@ function renderTrips(trips) {
   container.innerHTML = '';
 
   trips.forEach(trip => {
+    if (trip.seats_total === 1 && trip.seats_left === 1) return;
+    
     const card = document.createElement('div');
     card.className = 'trip-card';
 
