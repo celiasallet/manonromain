@@ -98,7 +98,6 @@ function renderTrips(trips) {
       <h3 class="volant">${trip.driver}</h3>
       <p class="depart">Départ : <strong>${trip.departure}</strong></p>
       <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
-      ${trip.reservedPseudos?.length ? `<p class="reserved-list">Réservé par : ${trip.reservedPseudos.join(', ')}</p>` : ''}
     `;
 
     if(trip.seats_left >= 1){
@@ -160,23 +159,23 @@ function renderTrips(trips) {
 }
 
 // Fetch trips au chargement
-const tripsContainer = document.getElementById('trips-container');
-if(tripsContainer){
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      console.log('Données reçues :', data);
-      const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
-      const mainTrips = tripsData.filter(t => t.seats_total >= 1);
-      const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
+// const tripsContainer = document.getElementById('trips-container');
+// if(tripsContainer){
+//   fetch(API_URL)
+//     .then(res => res.json())
+//     .then(data => {
+//       console.log('Données reçues :', data);
+//       const tripsData = data.filter(r => !isNaN(Number(r.seats_total)) && !isNaN(Number(r.seats_left)));
+//       const mainTrips = tripsData.filter(t => t.seats_total >= 1);
+//       const reservations = tripsData.filter(t => t.parent_id); // toutes les réservations
 
-      mainTrips.forEach(trip => {
-        trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
-      });
+//       mainTrips.forEach(trip => {
+//         trip.reservedPseudos = reservations.filter(r => r.parent_id === trip.id).map(r => r.pseudo);
+//       });
 
-      renderTrips(mainTrips);
-    })
-    .catch(err => console.error('Erreur récupération trajets', err));
-}
+//       renderTrips(mainTrips);
+//     })
+//     .catch(err => console.error('Erreur récupération trajets', err));
+// }
 
 });
