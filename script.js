@@ -72,68 +72,69 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = '';
 
     trips.forEach(trip => {
-      // 🚫 NE PAS AFFICHER si seats_total et seats_left valent 1
-      if (trip.seats_total === 1 && trip.seats_left === 1) return;
+  // 🚫 NE PAS AFFICHER si seats_total ET seats_left valent 1
+  if (trip.seats_total === 1 && trip.seats_left === 1) return;
 
-      const card = document.createElement('div');
-      card.className = 'trip-card';
-      card.innerHTML = `
-        <h3 class="volant">${trip.driver}</h3>
-        <p class="depart">Départ : <strong>${trip.departure}</strong></p>
-        <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
-      `;
+  const card = document.createElement('div');
+  card.className = 'trip-card';
+  card.innerHTML = `
+    <h3 class="volant">${trip.driver}</h3>
+    <p class="depart">Départ : <strong>${trip.departure}</strong></p>
+    <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
+  `;
 
-      if (trip.seats_left >= 1) {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Ton pseudo';
-        input.className = 'pseudo-input';
+  if (trip.seats_left >= 1) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Ton pseudo';
+    input.className = 'pseudo-input';
 
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.textContent = 'Réserver';
-        button.className = 'btn btn-primary';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'Réserver';
+    button.className = 'btn btn-primary';
 
-        button.addEventListener('click', () => {
-          const pseudo = input.value.trim();
-          if (!pseudo) { showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
+    button.addEventListener('click', () => {
+      const pseudo = input.value.trim();
+      if (!pseudo) { showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
 
-          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'reserve', trip_id: trip.id, pseudo }) })
-            .then(res => res.json())
-            .then(data => {
-              if (data.success) {
-                showPopupInCard(card, "Trajet réservé avec succès !");
-                button.textContent = "Merci !";
-                button.disabled = true;
-                const seatsLeftSpan = card.querySelector('.seats-left');
-                seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'reserve', trip_id: trip.id, pseudo }) })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showPopupInCard(card, "Trajet réservé avec succès !");
+            button.textContent = "Merci !";
+            button.disabled = true;
+            const seatsLeftSpan = card.querySelector('.seats-left');
+            seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
 
-                if (Number(seatsLeftSpan.textContent) === 0) {
-                  input.remove();
-                  button.remove();
-                  const full = document.createElement('span');
-                  full.className = 'full';
-                  full.textContent = 'Complet';
-                  card.appendChild(full);
-                }
-              } else {
-                showPopupInCard(card, 'Erreur : ' + data.error);
-              }
-            })
-            .catch(err => { console.error(err); alert('Erreur lors de la réservation'); });
-        });
-
-        card.appendChild(input);
-        card.appendChild(button);
-      } else {
-        const full = document.createElement('span');
-        full.className = 'full';
-        full.textContent = 'Complet';
-        card.appendChild(full);
-      }
-
-      container.appendChild(card);
+            if (Number(seatsLeftSpan.textContent) === 0) {
+              input.remove();
+              button.remove();
+              const full = document.createElement('span');
+              full.className = 'full';
+              full.textContent = 'Complet';
+              card.appendChild(full);
+            }
+          } else {
+            showPopupInCard(card, 'Erreur : ' + data.error);
+          }
+        })
+        .catch(err => { console.error(err); alert('Erreur lors de la réservation'); });
     });
+
+    card.appendChild(input);
+    card.appendChild(button);
+  } else {
+    const full = document.createElement('span');
+    full.className = 'full';
+    full.textContent = 'Complet';
+    card.appendChild(full);
+  }
+
+  container.appendChild(card);
+});
+
   }
 
   //////////////////// Fetch Trips
