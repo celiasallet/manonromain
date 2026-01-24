@@ -3,21 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //////////////////// popup
   function showPopupInCard(card, message) {
-    // crée le popup dynamiquement
     const popup = document.createElement('div');
     popup.className = 'thankyou-popup';
     popup.innerHTML = `
-    
       <div class="popup-content">
         <span class="close-btn">&times;</span>
         <p class="popup-message">${message}</p>
       </div>
     `;
     card.appendChild(popup);
-
     popup.style.display = 'flex';
 
-    // ferme au click sur le bouton ou en dehors
     const closeBtn = popup.querySelector('.close-btn');
     closeBtn.addEventListener('click', () => popup.remove());
     popup.addEventListener('click', e => { if(e.target === popup) popup.remove(); });
@@ -29,45 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (form) {
     form.addEventListener('submit', function(e) {
       e.preventDefault(); // bloque le reload
-
-      // message spécifique pour le RSVP
       showPopupInCard(form.parentElement, "Merci de ta réponse, c'est noté !");
-
       const btn = form.querySelector('button[type="submit"]');
       btn.textContent = "C'est noté !";
       btn.disabled = true;
-
-      // envoi Google Forms via iframe
       form.submit(); 
     });
   }
 
   ////////////////////
-  // Trip Form
-  document.addEventListener('DOMContentLoaded', () => {
+  // Trip Form / Fetch trips
   const API_URL = 'https://script.google.com/macros/s/AKfycbwZplUjWy7PPpjn-cPRwstji_0L2mPQeotLi5Zl8ZSzAWV9_D5h7Bc7hea9Ea6Bw7q3/exec';
   const tripsContainer = document.getElementById('trips-container');
 
-  // Fonction popup
-  function showPopupInCard(card, message) {
-    const popup = document.createElement('div');
-    popup.className = 'thankyou-popup';
-    popup.innerHTML = `
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <p class="popup-message">${message}</p>
-      </div>
-    `;
-    card.appendChild(popup);
-    popup.style.display = 'flex';
-
-    // fermer popup
-    const closeBtn = popup.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () => popup.remove());
-    popup.addEventListener('click', e => { if(e.target === popup) popup.remove(); });
-  }
-
-  // Render trips
   function renderTrips(trips) {
     if (!tripsContainer) return;
     tripsContainer.innerHTML = '';
@@ -79,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <h3 class="volant">${trip.driver}</h3>
         <p class="depart">Départ : <strong>${trip.departure}</strong></p>
-        <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
+        <p class="dispo">Places : <strong><span class="seats-left">${trip.seats_left}</span> / ${trip.seats_total} disponible.s</strong></p>
       `;
 
       if(trip.seats_left >= 1){
@@ -95,23 +65,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         button.addEventListener('click', () => {
           const pseudo = input.value.trim();
-          if (!pseudo) { showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
+          if(!pseudo){ showPopupInCard(card, "Merci de mettre ton pseudo pour réserver une place"); return; }
 
           fetch(API_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'reserve', trip_id: trip.id, pseudo })
+            body: JSON.stringify({ action:'reserve', trip_id:trip.id, pseudo })
           })
           .then(res => res.json())
           .then(data => {
-            if (data.success) {
+            if(data.success){
               showPopupInCard(card, "Trajet réservé avec succès !");
               button.textContent = "Merci !";
               button.disabled = true;
-              button.classList.add('disabled');
 
               const seatsLeftSpan = card.querySelector('.seats-left');
               seatsLeftSpan.textContent = Number(seatsLeftSpan.textContent) - 1;
-              if (Number(seatsLeftSpan.textContent) === 0) {
+
+              if(Number(seatsLeftSpan.textContent) === 0){
                 input.remove();
                 button.remove();
                 const full = document.createElement('span');
@@ -140,27 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Fetch trips
-  if (tripsContainer) {
+  if(tripsContainer){
     fetch(API_URL)
       .then(res => res.json())
       .then(data => {
         console.log('Données reçues :', data);
 
         // NE GARDER QUE LES TRAJETS SANS PSEUDO
-        const mainTrips = data.filter(trip => {
-          const pseudo = (trip.pseudo || '').trim();
-          const seatsTotal = Number(trip.seats_total);
-          const seatsLeft = Number(trip.seats_left);
-
-          return pseudo === '' && !isNaN(seatsTotal) && !isNaN(seatsLeft) && seatsTotal >= 1;
-        });
-
+        const mainTrips = data.filter(trip => !(trip.pseudo && trip.pseudo.trim() !== ''));
         console.log('Trajets filtrés (pseudo vide) :', mainTrips);
         renderTrips(mainTrips);
       })
       .catch(err => console.error('Erreur récupération trajets', err));
   }
 });
+
 
 //   const API_URL = 'https://script.google.com/macros/s/AKfycbwZplUjWy7PPpjn-cPRwstji_0L2mPQeotLi5Zl8ZSzAWV9_D5h7Bc7hea9Ea6Bw7q3/exec';
 //   const tripForm = document.getElementById('trip-form');
